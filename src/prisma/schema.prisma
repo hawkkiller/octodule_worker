@@ -1,0 +1,91 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+  UNPAID
+}
+
+model Chat {
+  // telegram chat id
+  id        String   @id
+  paid      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([id], name: "chat_index")
+  @@map("chats")
+}
+
+model User {
+  // telegram id
+  id                 String             @id @unique
+  subscriptionStatus SubscriptionStatus @default(UNPAID) @map("subscription_status")
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+
+  @@index([id], name: "user_index")
+  @@map("users")
+}
+
+model Schedule {
+  id        Int       @id @default(autoincrement())
+  title     String
+  days      Day[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([id], name: "schedule_index")
+  @@map("schedules")
+}
+
+model Day {
+  id         Int       @id @default(autoincrement())
+  lessons    Lesson[]
+  Schedule   Schedule? @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  scheduleId Int
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  @@index([id], name: "day_index")
+  @@map("days")
+}
+
+model Lesson {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String    @default("")
+  keyValues KV[]
+  Day       Day       @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  dayId     Int
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([id], name: "lesson_index")
+  @@map("lessons")
+}
+
+model KV {
+  id        Int       @id @default(autoincrement())
+  key       String
+  value     String
+  lesson    Lesson    @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId  Int       @map("lesson_id")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([id, lessonId], name: "kv_index")
+  @@map("kvs")
+}
