@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prisma": "cd src/prisma/ && npx prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -23,9 +24,10 @@
   },
   "dependencies": {
     "@prisma/client": "^4.7.0",
+    "@types/amqplib": "^0.10.0",
+    "amqplib": "^0.10.3",
     "dotenv": "^16.0.3",
     "languagedetect": "^2.0.0",
-    "telegraf": "^4.11.2",
     "ts-node": "^10.9.1"
   }
 }

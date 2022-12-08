@@ -1,10 +1,25 @@
 version: '3.7'
 
 services:
-  database: 
+  octodule_worker_db:
+    networks:
+      - octo
     image: postgres:15
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+  octodule_worker:
+    networks:
+      - octo
+    build: .
+    restart: always
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN}
+      RABBIT_MQ_HOST: ${RABBIT_MQ_HOST}
+    depends_on:
+      - octodule_worker_db
+networks:
+  octo:
+    external: true
