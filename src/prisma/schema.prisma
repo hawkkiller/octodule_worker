@@ -7,39 +7,23 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum SubscriptionStatus {
-  ACTIVE
-  CANCELLED
-  PAST_DUE
-  UNPAID
-}
-
 model Chat {
   // telegram chat id
-  id        String   @id
-  paid      Boolean  @default(false)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id        String     @id
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  schedules Schedule[]
 
   @@index([id], name: "chat_index")
   @@map("chats")
-}
-
-model User {
-  // telegram id
-  id                 String             @id @unique
-  subscriptionStatus SubscriptionStatus @default(UNPAID) @map("subscription_status")
-  createdAt          DateTime           @default(now()) @map("created_at")
-  updatedAt          DateTime           @updatedAt @map("updated_at")
-
-  @@index([id], name: "user_index")
-  @@map("users")
 }
 
 model Schedule {
   id        Int       @id @default(autoincrement())
   title     String
   days      Day[]
+  chatId    String    @map("chat_id")
+  chat      Chat      @relation(fields: [chatId], references: [id])
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
@@ -50,6 +34,8 @@ model Schedule {
 
 model Day {
   id         Int       @id @default(autoincrement())
+  title      String
+  index      Int
   lessons    Lesson[]
   Schedule   Schedule? @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   scheduleId Int

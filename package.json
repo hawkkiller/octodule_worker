@@ -5,10 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prisma": "cd src/prisma/ && npx prisma generate"
+    "prisma:gen": "npx prisma generate",
+    "prisma:deploy": "npx prisma migrate deploy",
+    "prisma:migrate": "npx prisma migrate dev --name init"
   },
   "keywords": [],
   "author": "",
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
+  },
   "license": "ISC",
   "devDependencies": {
     "@types/jest": "^29.2.3",
@@ -28,6 +33,7 @@
     "amqplib": "^0.10.3",
     "dotenv": "^16.0.3",
     "languagedetect": "^2.0.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "tslog": "^4.4.4"
   }
 }
